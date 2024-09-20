@@ -5,6 +5,9 @@ app.listen(PORT, ()=>{
     console.log(`Rodando na porta ${PORT}`);
 });
 
-app.get('/message/:id',(request, response)=>{
-    response.send(`Request na ${request.params.id}`);
+app.use(express.json())
+
+app.post('/users',(request, response)=>{
+    const { name, email, password } = request.body;
+    response.json(`Chamou o Post. Request na ${ name, email, password }`);
 })
