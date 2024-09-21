@@ -1,13 +1,10 @@
-const express = require ('express');
+const express = require("express");
+const routes = require("./routes/index.js");
+
 const app = express();
+app.use(express.json());
+app.use(routes);
+
+
 const PORT = 3333;
-app.listen(PORT, ()=>{
-    console.log(`Rodando na porta ${PORT}`);
-});
-
-app.use(express.json())
-
-app.post('/users',(request, response)=>{
-    const { name, email, password } = request.body;
-    response.json(`Chamou o Post. Request na ${ name, email, password }`);
-})
+app.listen(PORT, ()=>{console.log(`Rodando na porta ${PORT}`)});
