@@ -1,4 +1,6 @@
 const AppError = require('../utils/AppError');
+const sqliteConnection = require('../database/sqlite')
+const { hash } = require('bcryptjs');
 
 /*
 utilizaremos estes 5 métodos na aplicação
@@ -9,12 +11,25 @@ utilizaremos estes 5 métodos na aplicação
 *delete - DELETE para remover um registro
 */
 class UsersController {
-    create(request, response) {
+    async create(request, response) {
         const { name, email, password } = request.body;
-        if (!name) {
-            throw new AppError("Nome é obrigatório");
+        
+        const database = await sqliteConnection();
+
+        const checkUserExists = await database.get('SELECT * FROM users WHERE email = (?)', [email]);
+
+        if(checkUserExists){
+            throw new AppError('este email já está em uso');
         }
-        response.status(201).json({ name, email, password });
+
+        const hashedPassword = await hash(password, 8);
+
+        await database.run(
+            'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
+            [name, email, hashedPassword]
+        )
+
+        return response.status(201).json();
     }
 }
 
